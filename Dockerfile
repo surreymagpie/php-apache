@@ -27,12 +27,13 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     && service apache2 restart
 
 # ========= PHP SETUP =========
-# install php extensions - gd and zip
+# install php extensions - database connectors, gd and zip
 RUN apt-get update && \
     apt-get install -yyq --no-install-recommends \
       libfreetype6-dev \
       libjpeg62-turbo-dev \
       libpng-dev \
+      libpq-dev \
       libwebp-dev \
       libxpm-dev \
       libzip-dev \
@@ -47,8 +48,12 @@ RUN apt-get update && \
       --with-xpm-dir \
       --with-zlib-dir \
     && docker-php-ext-configure zip --with-libzip \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install -j$(nproc) zip
+    && docker-php-ext-install -j$(nproc) \
+        gd \
+        opcache \
+        pdo_mysql \
+        pdo_pgsql \
+        zip
 
 # install composer
 RUN curl  -o /usr/local/bin/composer \
@@ -59,4 +64,3 @@ RUN curl  -o /usr/local/bin/composer \
 RUN curl  -o /usr/local/bin/drush \
           -L https://github.com/drush-ops/drush-launcher/releases/download/0.6.0/drush.phar; \
       chmod +x /usr/local/bin/drush
-
