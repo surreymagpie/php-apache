@@ -15,8 +15,9 @@ RUN usermod -u ${UID} www-data && \
       chsh -s /bin/bash www-data
 
 # Allow document root to be configured at runtime
-# e.g. `docker run <other options> -e APACHE_DOCUMENT_ROOT=/path/to/new/root <image>` or in your `docker-compose.yml`
-ENV APACHE_DOCUMENT_ROOT=/var/www/html
+# `docker run <options> -e APACHE_DOCUMENT_ROOT=/path/to/new/root <image>`
+# or in your `docker-compose.yml`
+ENV APACHE_DOCUMENT_ROOT /var/www/html
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
       /etc/apache2/sites-available/*.conf \
