@@ -59,7 +59,9 @@ RUN apt-get update && \
         opcache \
         pdo_mysql \
         pdo_pgsql \
-        zip
+        zip \
+    && pecl install uploadprogress \
+    && docker-php-ext-enable uploadprogress
 
 # install composer
 RUN curl  -o /usr/local/bin/composer \
