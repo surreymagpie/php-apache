@@ -14,15 +14,13 @@ RUN usermod -u ${UID} www-data && \
       groupmod -g ${GID} www-data && \
       chsh -s /bin/bash www-data
 
-RUN chmod a+w /tmp
-
 # Allow document root to be configured at runtime
 # `docker run <options> -e APACHE_DOCUMENT_ROOT=/path/to/new/root <image>`
 # or in your `docker-compose.yml`
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 # No composer memory limit and use caching for better performance
 ENV COMPOSER_MEMORY_LIMIT -1
-ENV COMPOSER_CACHE_DIR /tmp
+ENV COMPOSER_CACHE_DIR /tmp/composer
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
       /etc/apache2/sites-available/*.conf \
@@ -62,6 +60,8 @@ RUN apt-get update && \
         zip \
     && pecl install uploadprogress \
     && docker-php-ext-enable uploadprogress
+
+RUN cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
 
 # install composer
 RUN curl  -o /usr/local/bin/composer \
